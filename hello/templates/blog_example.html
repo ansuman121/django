@@ -1,0 +1,314 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+  </head>
+  <body>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <nav class="navbar navbar-expand-lg bg-dark " data-bs-theme="dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Icoder</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">About</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  blogs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Technology</a></li>
+                  <li><a class="dropdown-item" href="#">web development</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="{% url 'show_blogs' %}">all blogs</a></li>
+                  <li><a class="dropdown-item" href="{% url 'write_blog' loc='home' %}">Write for us</a></li>
+    
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+              </li>
+            </ul>
+            <div class="mx-2">
+              {% if request.session.user_id %}
+                  <a class="btn btn-outline-danger" href="{% url 'logout' %}">Signout</a>
+              {% else %}
+                  <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                  <button class="btn btn-outline-danger mx-2" type="button" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</button>
+              {% endif %}
+            </div>
+            <form class="d-flex position-relative" role="search" onsubmit="return false;">
+            <input id="blog-search" class="form-control me-2" type="search" placeholder="Search blog by title..." aria-label="Search" autocomplete="off" />
+            <button class="btn btn-outline-light" type="submit">Search</button>
+            <div id="search-results" class="list-group position-absolute w-100 mt-5 z-3"></div>
+            </form>
+            
+          </div>
+        </div>
+      </nav>
+
+
+
+      <!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="signupLabel">Login to your Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body ">
+          <form method="POST" action="{% url 'user_login' loc='home' %}">
+            {% csrf_token %}
+            <div class="row mb-3 my-4">
+              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+              <div class="col-sm-10">
+                <input type="email" class="form-control" id="inputEmail3" name = 'l_email'>
+              </div>
+              
+            </div>
+            <div class="row mb-3 my-4">
+              <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" id="inputPassword3" name = 'l_pass'>
+              </div>
+            </div>
+            
+            <div class="row mb-3 my-4">
+              <div class="col-sm-4 ">
+                confirm your Login
+                </div>
+              <div class="col-sm-8 ">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck1" name = "l_confirm">
+                  <label class="form-check-label" for="gridCheck1" >
+                    yes
+                  </label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="container mt-5">
+  <div class="blog-post">
+    <h2 class="mb-4">The Power of Consistency in Learning</h2>
+
+    <p>Welcome to this example blog! This post is created to demonstrate how your blog content will appear once you click a card on the homepage. While this is not a real article, it's written in a natural blog format to inspire and guide learners on their journey.</p>
+
+    <hr>
+
+    <h4 class="mt-4">🌱 Starting Small is the Key</h4>
+    <p>Whether you're learning web development, AI, digital marketing, or content writing, beginning with small and realistic goals is essential. You don't need to build the next big app on Day 1. Instead, just setting up your coding environment or writing a basic HTML page is a win.</p>
+
+    <blockquote class="blockquote mt-3">
+      <p class="mb-0">"Great things are not done by impulse, but by a series of small things brought together." — Vincent Van Gogh</p>
+    </blockquote>
+
+    <h4 class="mt-4">🎯 Why Consistency Works</h4>
+    <p>Learning isn't about cramming or chasing perfection. It's about building discipline. When you show up daily—even if only for 20 minutes—you signal to your brain that this skill is important. This helps create stronger neural connections, making retention easier and faster over time.</p>
+
+    <p>Think of consistency as compound interest. A small daily investment leads to massive returns over time.</p>
+
+    <h4 class="mt-4">📅 Make It a Routine</h4>
+    <ul>
+      <li><strong>Set a learning time:</strong> Whether it’s early morning or post-dinner, consistency thrives on routine.</li>
+      <li><strong>Use the Pomodoro technique:</strong> 25 minutes of focused work followed by a 5-minute break keeps you fresh.</li>
+      <li><strong>Keep a learning journal:</strong> Write down what you learned today. Even a sentence helps!</li>
+    </ul>
+
+    <h4 class="mt-4">💡 Bonus Tip: Celebrate Micro-Wins</h4>
+    <p>Completed your first JavaScript function? Solved a CSS layout issue? Celebrate it! These small wins keep the fire alive and remind you that you're progressing. Don’t wait to complete a full project to feel accomplished.</p>
+
+    <h4 class="mt-4">📈 Track, Reflect, Adjust</h4>
+    <p>Every week, take 10 minutes to reflect:</p>
+    <ul>
+      <li>What did I learn?</li>
+      <li>What did I struggle with?</li>
+      <li>How can I improve next week?</li>
+    </ul>
+    <p>Self-reflection isn’t just about seeing progress, it's about owning your journey.</p>
+
+    <h4 class="mt-4">💬 Learn in Public</h4>
+    <p>Don’t be afraid to share your progress on platforms like X (Twitter), LinkedIn, or even a personal blog. Teaching others what you've just learned helps reinforce the concept in your mind. Plus, it builds your network.</p>
+
+    <h4 class="mt-4">🚀 Final Thoughts</h4>
+    <p>This blog is an example, but the principles shared are powerful and universal. Whether you're mastering backend development, getting started with machine learning, or exploring UI/UX design — stay consistent, be patient, and trust the process.</p>
+
+    <p>Remember, the journey to expertise is never a straight line. You’ll stumble, pause, and sometimes even backtrack. But as long as you keep showing up, you’re winning.</p>
+
+    <hr class="my-4">
+
+    <p class="text-muted mt-5"><em>This is a demo blog created to illustrate how actual blog content will appear in the blog detail page after clicking a card. Use this as a placeholder or inspiration for your real articles.</em></p>
+  </div>
+</div>
+  
+  <!--signup Modal -->
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="signupModalLabel">Register an Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'signup' loc='home' %}">
+            {% csrf_token %}
+            <div class="row mb-3 my-4">
+              <label for="inputEmail3" class="col-sm-5 col-form-label">Enter your Name</label>
+              <div class="col-sm-7">
+                <input type="text" class="form-control" id="inputEmail3" name = 'name'>
+              </div>
+              
+            </div>
+            <div class="row mb-3 my-4">
+              <label for="inputEmail3" class="col-sm-5 col-form-label">Enter your Email</label>
+              <div class="col-sm-7">
+                <input type="email" class="form-control" id="inputEmail3" name = 'email'>
+              </div>
+              
+            </div>
+            <div class="row mb-3 my-4 ">
+              <label for="inputPassword3" class="col-sm-5 col-form-label">Enter Your Password</label>
+              <div class="col-sm-7">
+                <input type="password" class="form-control" id="inputPassword3" name = 'password'>
+              </div>
+            </div>
+            <div class="row mb-3 my-4">
+              <label for="inputPassword3" class="col-sm-5 col-form-label">Confirm your Entered Password</label>
+              <div class="col-sm-7">
+                <input type="password" class="form-control" id="inputPassword3" name = 'confirm_password'>
+              </div>
+            </div>
+            
+            <div class="row mb-3 my-4">
+              <div class="col-sm-5 ">
+                confirm to Create your account
+                </div>
+              <div class="col-sm-7 ">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck1" name = 'confirm'>
+                  <label class="form-check-label" for="gridCheck1">
+                    yes
+                  </label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary my-4">Create Account</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <hr class="featurette-divider">
+
+      <footer class="container">
+        <p class="float-end"><a href="#">Back to top</a></p>
+        <p>© 2021–2025 Company, Inc. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </footer>
+      <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("blog-search");
+    const resultsBox = document.getElementById("search-results");
+    let selectedIndex = -1;
+
+    searchInput.addEventListener("keyup", (e) => {
+        const query = searchInput.value.trim();
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            handleKeyNavigation(e);
+            return;
+        }
+
+        selectedIndex = -1;
+        resultsBox.innerHTML = "";
+
+        if (query.length > 0) {
+            fetch(`/search/?q=${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    resultsBox.innerHTML = "";
+                    if (data.length > 0) {
+                        data.forEach((blog) => {
+                            const item = document.createElement("a");
+                            item.href = `/blog_details/${blog.id}/`; 
+                            item.className = "list-group-item list-group-item-action";
+                            item.textContent = blog.title;
+                            resultsBox.appendChild(item);
+                        });
+                    } else {
+                        const noResult = document.createElement("div");
+                        noResult.className = "list-group-item";
+                        noResult.textContent = "No blog found.";
+                        resultsBox.appendChild(noResult);
+                    }
+                });
+        }
+    });
+
+    // Click outside to hide
+    document.addEventListener("click", (e) => {
+        if (!resultsBox.contains(e.target) && e.target !== searchInput) {
+            resultsBox.innerHTML = "";
+        }
+    });
+
+    // Arrow key + enter handling
+    function handleKeyNavigation(e) {
+        const items = resultsBox.querySelectorAll("a");
+        if (items.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            selectedIndex = (selectedIndex + 1) % items.length;
+        } else if (e.key === "ArrowUp") {
+            selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        } else if (e.key === "Enter") {
+            if (selectedIndex >= 0) {
+                window.location.href = items[selectedIndex].href;
+            }
+            return;
+        }
+
+        items.forEach(item => item.classList.remove("active"));
+        if (selectedIndex >= 0) {
+            items[selectedIndex].classList.add("active");
+        }
+    }
+});
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+  </body>
+</html>

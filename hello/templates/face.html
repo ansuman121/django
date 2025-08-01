@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <div class="row align-items-start-100 my-5 gap-5">
+      <div class="col-md-5 mx-5">
+        <div class="p-3 border bg-light">
+          <h2 class="my-2 mb-4 mx-4"><b>Attendance System</b></h2>
+          <div class="d-flex flex-wrap">
+            <button type="button" class="btn btn-primary btn-lg mx-3" onclick="runMethod('start')">Start Camera</button>
+            <button type="button" class="btn btn-danger btn-lg mx-3" onclick="runMethod('stop')">Stop Camera</button>
+            <button type="button" class="btn btn-secondary btn-lg mx-3" onclick="runMethod('test')">Start Testing</button>
+            <button type="button" class="btn btn-dark btn-lg mx-3 my-4" onclick="runMethod('train')">Start training</button>
+            <button type="button" class="btn btn-danger btn-lg mx-3 my-4" onclick="runMethod('stop_test')">Stop testing</button>
+            <button type="button" class="btn btn-success btn-lg mx-4 my-4" onclick="runMethod('view_res')">view result</button>
+
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="p-3 border bg-light">
+          <h2 class="my-2 mb-4 mx-4"><b>Employee List</b></h2>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Emp_Id</th>
+                <th scope="col">Name</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row align-items-start">
+      <div class="col-md-5 mb-3 mx-5">
+        <div class="p-3 border bg-light">
+          <h4>Camera Feed</h4>
+          <img id="videoElement" src="" width="100%" class="img-fluid">
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      let employeeCount = 0;
+      let seenNames = new Set();
+
+      function runMethod(methodName) {
+        $.ajax({
+          url: `/run-${methodName}/`,
+          method: "POST",
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          success: function (response) {
+            if (methodName === "view_res") {
+      
+              if (response.results && response.results.length > 0) {
+                const table = document.getElementById("employeeTable");
+                response.results.forEach(person => {
+                  const name = person.name;
+                  if (name.toLowerCase() !== "unknown" && !seenNames.has(name)) {
+                    seenNames.add(name);
+                    employeeCount += 1;
+                    const empId = `EMP${String(employeeCount).padStart(3, '0')}`;
+                    const row = `<tr>
+                                    <td>${employeeCount}</td>
+                                    <td>${empId}</td>
+                                    <td>${name}</td>
+                                 </tr>`;
+                    table.innerHTML += row;
+                  }
+                });
+              } 
+              
+            } 
+            
+            else {
+              alert(response.message);
+
+              if (methodName === "start") {
+                const img = document.getElementById("videoElement");
+                img.src = "";  
+                setTimeout(() => {
+                    img.src = "/video_feed/?_=" + new Date().getTime(); 
+                }, 100);
+            }
+
+              if (methodName === "stop") {
+                const img = document.getElementById("videoElement");
+                img.src = "";
+                img.srcObject = null;
+                img.removeAttribute("src");
+              }
+            }
+          },
+          error: function (xhr) {
+            alert("Error: " + xhr.responseText);
+          }
+        });
+      }
+      setInterval(() => {
+        runMethod("view_res");
+      }, 3000);
+      
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

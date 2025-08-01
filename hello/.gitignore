@@ -1,0 +1,20 @@
+# Python
+*.pyc
+__pycache__/
+
+# Environments
+venv/
+.env
+
+# Django
+*.sqlite3
+db.sqlite3
+/media
+/staticfiles
+
+# VSCode or PyCharm
+.vscode/
+.idea/
+
+# Migrations (optional)
+**/migrations/
